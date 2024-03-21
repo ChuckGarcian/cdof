@@ -43,7 +43,7 @@ int main(int argc, const char *argv[])
 	int i,a[100],b[100],c[100];
 	uint32_t total = 0;
 	int lcore_id;
-    int numEvents = argc - 1;
+  int numEvents = argc - 1;
 
 	/* Seed for predictable rand() results */
 	srand(0);
