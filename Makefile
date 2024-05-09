@@ -1,28 +1,26 @@
+CPPCHECK = cppcheck
+CPPCHECKFLAG = --std=c99 --verbose --bug-hunting 
+
 CC = gcc
-CC_OPTIONS = -Wall -O2 -c
-LDFLAGS = -L/home/chuckg/Packages/pcm/build/lib
-LDLIBS = -lpcm
-RM = rm -f
+CFLAGS = -Wall -Wextra -g
+BIN = bin
+DIRS = src tests include
+DIRPATHS = $(foreach DIR, $(DIRS), $(shell find $(DIR) -type d))
+FILEPATHS = $(foreach DIR, $(DIRPATHS), $(shell find $(DIR) -type f -name *.c))
+IFLAGS = $(DIRPATHS:%=-I%)
+VPATH = $(DIRPATHS)
 
-BINARY_DIR = /home/chuckg/Packages/pcm/build
-INSTALL_RPATH = /home/chuckg/Packages/pcm/build/lib/libpcm.so
+all:
+	@echo $(DIRPATHS)
 
-SRCS := main.c
-OBJS := $(SRCS:%.c=%.o)
-EXEC := driver
+%_test : %_test.c
+	@$(CC) $(CFLAGS) $(IFLAGS) -o $(BIN)/$@ $<
 
-all: $(EXEC)
+test_%: %_test
+	@$(BIN)/$<
 
-$(EXEC): $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -Wl,-rpath,$(BINARY_DIR)/lib:$(INSTALL_RPATH) -ldl -lpthread -o $(EXEC)
+check_%: %.c
+	@$(CPPCHECK) $(CPPCHECKFLAG) $<
 
-%.o: %.c
-	$(CC) $(CC_OPTIONS) -DPCM_DYNAMIC_LIB $< -o $@
-
-clean:
-	$(RM) $(OBJS) $(EXEC)
-
-run: all
-	sudo ./$(EXEC) 
-
-.PHONY: all clean run
+compile_%: %.c
+	@$(CC) $(CFLAGS) $(IFLAGS) -o $(BIN)/$* $<
