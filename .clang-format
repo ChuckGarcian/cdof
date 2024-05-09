@@ -1,0 +1,5 @@
+---
+BasedOnStyle: LLVM  # or Google, Chromium, Mozilla, WebKit, or any other style you prefer
+#BasedOnStyle: GNU
+ColumnLimit: 80
+---

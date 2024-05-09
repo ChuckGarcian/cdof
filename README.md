@@ -1,1 +1,1 @@
-*CDOF* is a dynamic optimization framework for C powered by Intel PCM
+*CDOF* is a dynamic optimization framework for C.
