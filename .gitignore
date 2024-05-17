@@ -1,2 +1,6 @@
 bin
-
+.venv/
+*.egg-info/
+dist/
+*.gtirb
+__pycache__/

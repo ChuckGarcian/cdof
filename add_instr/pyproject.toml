@@ -1,0 +1,13 @@
+[project]
+name = "cdof-py"
+version = "0.0.1"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.entry-points.gtirb_rewriting]
+my-pass = "cdof.simple_rewrite:NopPass"
