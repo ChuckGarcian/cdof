@@ -2,6 +2,8 @@
 name = "cdof-py"
 version = "0.0.1"
 dependencies = [
+    "setuptools",
+    "gtirb_rewriting"
 ]
 
 
@@ -10,4 +12,5 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project.entry-points.gtirb_rewriting]
-my-pass = "cdof.simple_rewrite:NopPass"
+nop-pass = "cdof.simple_rewrite:NopPass"
+prefetch-pass = "cdof.simple_rewrite:PrefetchPass"
