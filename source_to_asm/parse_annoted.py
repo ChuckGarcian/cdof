@@ -1,6 +1,7 @@
 import argparse
 from dataclasses import dataclass
 from typing import Optional
+import re
 
 
 @dataclass
@@ -20,7 +21,7 @@ class InstrumentedSource:
 functions = {}
 
 
-def parse_function(function: list[str]):
+def parse_function(function: list[str], function_name: str):
     print("________ NEW __________")
     function_lines = []
     for line in function:
@@ -30,55 +31,55 @@ def parse_function(function: list[str]):
         if ir == ".":
             ir = None
         else:
-            ir = int(ir)
+            ir = int(ir.replace(",",""))
 
         i1_miss = line_split[1]
         if i1_miss == ".":
             i1_miss = None
         else:
-            i1_miss = int(i1_miss)
+            i1_miss = int(i1_miss.replace(",",""))
 
         ill_miss = line_split[2]
         if ill_miss == ".":
             ill_miss = None
         else:
-            ill_miss = int(ill_miss)
+            ill_miss = int(ill_miss.replace(",",""))
 
         data_reads = line_split[3]
         if data_reads == ".":
             data_reads = None
         else:
-            data_reads = int(data_reads)
+            data_reads = int(data_reads.replace(",",""))
 
         data1_miss_reads = line_split[4]
         if data1_miss_reads == ".":
             data1_miss_reads = None
         else:
-            data1_miss_reads = int(data1_miss_reads)
+            data1_miss_reads = int(data1_miss_reads.replace(",",""))
 
         datall_miss_reads = line_split[5]
         if datall_miss_reads == ".":
             datall_miss_reads = None
         else:
-            datall_miss_reads = int(datall_miss_reads)
+            datall_miss_reads = int(datall_miss_reads.replace(",",""))
 
         data_writes = line_split[6]
         if data_writes == ".":
             data_writes = None
         else:
-            data_writes = int(data_writes)
+            data_writes = int(data_writes.replace(",",""))
 
         data1_miss_writes = line_split[7]
         if data1_miss_writes == ".":
             data1_miss_writes = None
         else:
-            data1_miss_writes = int(data1_miss_writes)
+            data1_miss_writes = int(data1_miss_writes.replace(",",""))
 
         datall_miss_writes = line_split[8]
         if datall_miss_writes == ".":
             datall_miss_writes = None
         else:
-            datall_miss_writes = int(datall_miss_writes)
+            datall_miss_writes = int(datall_miss_writes.replace(",",""))
         source_line = " ".join(line_split[9:])
         instrumented_line = InstrumentedSource(
             source=source_line,
@@ -93,14 +94,10 @@ def parse_function(function: list[str]):
             data_ll_write_miss=datall_miss_writes,
         )
         function_lines.append(instrumented_line)
-    pass
-
+    functions[function_name] = function_lines
 
 def parse_source_section(section: list[str]):
-    print("found source")
-    print(functions)
     source_file = section[0].split()[-1]
-    print(source_file)
     # If we find a // @prefetch and it is in section, we know that we need
     # To add prefetch instructions here
     prefetch_lines = []
@@ -126,9 +123,7 @@ def parse_source_section(section: list[str]):
             # print("Non last number")
         if function_name in functions:
             print(f"found {function_name}")
-            parse_function(section[true_line:function_end])
-        # print(true_line, function_end)
-        # print(f"ending is {section[function_end]}")
+            parse_function(section[true_line:function_end], function_name)
 
 
 def parse_function_file_section(section: list[str]) -> dict[str, str]:
@@ -156,11 +151,19 @@ def parse_section(section: list[str]):
         return parse_function_file_section(section)
 
 
+def parse_objdump_function(function_name: str, function_body: list[str]):
+    print(f"{function_name=}")
+    if (function_name not in functions):
+        print(f"Skipped {function_name}")
+        return
+    pass
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("filename")
+    parser.add_argument("cachegrind")
+    parser.add_argument("objdump")
     args = parser.parse_args()
-    filename = args.filename
+    filename = args.cachegrind
     print(filename)
     section = []
     count = 0
@@ -181,6 +184,28 @@ def main():
             else:
                 section.append(line)
     parse_section(section)
+
+    # print(functions)
+
+    # We have parsed the source code, now we want to parse the objdump
+    filename = args.objdump
+    cur_function_name = ""
+    cur_function = []
+    function_pattern = re.compile(r"[0-9a-f]{16} <.*>:")
+    with open(filename) as f:
+        line = "junk"
+        while line != "":
+            line = f.readline()
+            if (re.match(function_pattern, line)):
+                # do something with cur_function
+                parse_objdump_function(cur_function_name, cur_function)
+                cur_function_name = line.split("<")[1].split(">")[0]
+                cur_function = []
+            else:
+                cur_function.append(line)
+
+    # The fini section shoukd be at the end, so we dont really need to deal with it
+
 
 
 if __name__ == "__main__":
