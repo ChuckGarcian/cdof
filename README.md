@@ -1,5 +1,6 @@
-*CDOF* is a dynamic optimization framework for C.
+# CDOF
 
+*CDOF* is a dynamic optimization framework for C.
 
 ## Tasks
 
@@ -7,3 +8,7 @@
 * Automate the dissassembling and reassalblimg process
 * Determine what instructions access memory, and get registers used
 * Insert the prefetch instruction  before the deliquent load
+
+## Notes
+
+* Determining function definitons is hard, maybe require a // @prefetch to be inserted above
