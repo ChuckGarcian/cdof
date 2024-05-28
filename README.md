@@ -5,10 +5,12 @@
 ## Tasks
 
 * Connect valgrind source code to instructions
-* Automate the dissassembling and reassalblimg process
+* Automate the disassembling and reassembling process
 * Determine what instructions access memory, and get registers used
-* Insert the prefetch instruction  before the deliquent load
+* Insert the prefetch instruction  before the delinquent load
 
 ## Notes
 
-* Determining function definitons is hard, maybe require a // @prefetch to be inserted above
+* Determining function definitions is hard, maybe require a // @prefetch to be inserted above
+* Additionally, one must have the function type signature and name on the same line
+  * TODO: Remove that restriction
