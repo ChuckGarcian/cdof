@@ -157,16 +157,16 @@ def parse_section(section: list[str]):
         return parse_function_file_section(section)
 
 
-
-
-def determine_bad_load(source_line: InstrumentedSource, assembly_line: str) -> Optional[Match]:
-    # Given a source line of code, and the binary lone of code, returns the memory address 
-    # Register of the load that is badly made. If there assembly line does not 
+def determine_bad_load(
+    source_line: InstrumentedSource, assembly_line: str
+) -> Optional[Match]:
+    # Given a source line of code, and the binary lone of code, returns the memory address
+    # Register of the load that is badly made. If there assembly line does not
     # Access meemoy returns None
 
-    if ("(" not in assembly_line):
-        return None 
-    if ("lea" in assembly_line or "nop" in assembly_line):
+    if "(" not in assembly_line:
+        return None
+    if "lea" in assembly_line or "nop" in assembly_line:
         return None
     # if (source_line.data_1_read_miss is None):
     #     return None
@@ -174,22 +174,25 @@ def determine_bad_load(source_line: InstrumentedSource, assembly_line: str) -> O
     #     # Not enough misses here, try again later
     #     return None
     return re.search(r"\(.*\)", assembly_line)
-    
-    
 
 
-def parse_objdump_function(function_name: str, function_body: list[str]):
+def parse_objdump_function(
+    function_name: str, function_body: list[str]
+) -> tuple[list[str], list[int]]:
     print(f"{function_name=}")
     if function_name not in functions:
         print(f"Skipped {function_name}")
-        return
-    
+        return ([],[])
+
     asm_pattern = re.compile(r"    [0-9a-f]*:\t.*")
     current_source = None
     idx = -2
     matching_asm = []
     my_function = functions[function_name]
     lines_of_source = {}
+    fake_memory_operation = 0
+    addresses = []
+    memory_operations = []
     for line in function_body:
         stripped_line = line.strip("\n")
         match = re.match(asm_pattern, stripped_line)
@@ -203,26 +206,92 @@ def parse_objdump_function(function_name: str, function_body: list[str]):
             current_source = stripped_line
             # if idx >= len(my_function):
             #     print(f"Souce fell off {current_source=}, {idx=}")
-            # else: 
+            # else:
             #     print(f"{current_source=}, {idx=}, {my_function[idx].source=}")
             # current_source = stripped_line
             # matching_asm = []
             # idx += 1
         else:
             matching_asm.append(line)
-            if (current_source is None):
+            if current_source is None:
                 print("No source???")
-            if (idx < 0):
+            if idx < 0:
                 print("Dealing with offsets")
             else:
+                if "(" in line:
+                    fake_memory_operation += 1
+
                 match = determine_bad_load(my_function[idx], line)
                 if match is not None:
-                    print(match[0])   
+                    print(match[0])
+                    addresses.append(match[0])
+                    memory_operations.append(fake_memory_operation)
+    return (addresses, memory_operations)
+
+
+def parse_basic_block(
+    basic_block_lines: list[str],
+    mem_operation_start: int,
+    address: list[str],
+    prefetch_locations: list[int],
+) -> list[str]:
+    # Parse the basic block and inset a prefetch instruction if needed
+    # To inset a prefetch instruction we need to know which memory operations we need a prefetch for
+    # The starting memoy instruction index, and the address to prefetch
+    # Returns the rewritten basic block
+    copy_basic_block = []
+    cur_mem_operation = mem_operation_start
+    memory_block = []
+    for line in basic_block_lines:
+        if "(" in line:
+            for idx, location in enumerate(prefetch_locations):
+                if location > cur_mem_operation:
+                    break
+                if location == cur_mem_operation:
+                    address_to_use = address[idx]
+                    prefetch_instruction = " ".join(["PREFETCHT1 ", address_to_use])
+                    memory_block.insert(0, prefetch_instruction)
+                    break
+            cur_mem_operation += 1
+            memory_block = []
+        else:
+            memory_block.append(line)
+    return copy_basic_block
+
+
+def parse_ddiasm_function(
+    function_lines: list[str],
+    function_name: str,
+    memory_addeesses: list[str],
+    memory_indexes: list[int],
+):
+    if function_name not in functions:
+        print(f"Skipped {function_name} ddiasm")
+        return function_lines
+    print(f"Working on {function_name} ddiasm")
+    basic_block = []
+    function_with_prefetch = []
+    mem_operation = 0
+    for line in function_lines:
+        if line.startswith("."):
+            function_with_prefetch.extend(
+                parse_basic_block(
+                    basic_block, mem_operation, memory_addeesses, memory_indexes
+                )
+            )
+            basic_block = [line]
+        else:
+            basic_block.append(line)
+        if "(" in line:
+            mem_operation += 1
+    return function_with_prefetch
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("cachegrind")
     parser.add_argument("objdump")
+    parser.add_argument("ddiasm")
     args = parser.parse_args()
     filename = args.cachegrind
     print(filename)
@@ -253,20 +322,53 @@ def main():
     cur_function_name = ""
     cur_function = []
     function_pattern = re.compile(r"[0-9a-f]{16} <.*>:")
+    function_addresses = {}
+    function_indexes = {}
     with open(filename) as f:
         line = "junk"
         while line != "":
             line = f.readline()
             if re.match(function_pattern, line):
                 # do something with cur_function
-                parse_objdump_function(cur_function_name, cur_function)
+                addresses, memory_indexes = parse_objdump_function(
+                    cur_function_name, cur_function
+                )
+                function_addresses[cur_function_name] = addresses
+                function_indexes[cur_function_name] = memory_indexes
                 cur_function_name = line.split("<")[1].split(">")[0]
                 cur_function = []
             else:
                 cur_function.append(line)
 
     # The fini section shoukd be at the end, so we dont really need to deal with it
-    
+
+    # Now time to add the prefetch instructions
+
+    filename = args.ddiasm
+    ddiasm_func_pattern = re.compile(r"\.type .*, @function")
+    cur_function = []
+    cur_function_name = None
+    with open(filename, "a+") as f:
+        line = "junk"
+        f.seek(0)
+        while line != "# end section .text\n":
+            line = f.readline()
+            if re.match(ddiasm_func_pattern, line.strip("\n")):
+                if cur_function_name is not None:
+                    if (cur_function_name in function_addresses):
+                        my_addresses = function_addresses[cur_function_name]
+                        my_indexes = function_indexes[cur_function_name]
+                        parse_ddiasm_function(
+                            cur_function, cur_function_name, my_addresses, my_indexes
+                        )
+                cur_function = []
+                cur_function_name = line.split()[1][:-1]
+            else:
+                cur_function.append(line)
+        if (cur_function_name in function_addresses):
+            my_addresses = function_addresses[cur_function_name]
+            my_indexes = function_indexes[cur_function_name]
+            parse_ddiasm_function(cur_function, cur_function_name, my_addresses, my_indexes)
 
 
 if __name__ == "__main__":
