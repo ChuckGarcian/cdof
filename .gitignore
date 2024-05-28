@@ -5,3 +5,4 @@ dist/
 *.gtirb
 __pycache__/
 tmp/
+out.txt

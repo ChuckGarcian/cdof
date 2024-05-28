@@ -183,33 +183,41 @@ def parse_objdump_function(function_name: str, function_body: list[str]):
     if function_name not in functions:
         print(f"Skipped {function_name}")
         return
+    
     asm_pattern = re.compile(r"    [0-9a-f]*:\t.*")
     current_source = None
     idx = -2
     matching_asm = []
     my_function = functions[function_name]
+    lines_of_source = {}
     for line in function_body:
         stripped_line = line.strip("\n")
         match = re.match(asm_pattern, stripped_line)
         if match is None:
-            if idx >= len(my_function):
-                print(f"Souce fell off {current_source=}, {idx=}")
-            else: 
-                print(f"{current_source=}, {idx=}, {my_function[idx].source=}")
+            if line in lines_of_source:
+                idx = lines_of_source[line]
+            else:
+                matching_asm = []
+                idx += 1
+                lines_of_source[line] = idx
             current_source = stripped_line
-            matching_asm = []
-            idx += 1
+            # if idx >= len(my_function):
+            #     print(f"Souce fell off {current_source=}, {idx=}")
+            # else: 
+            #     print(f"{current_source=}, {idx=}, {my_function[idx].source=}")
+            # current_source = stripped_line
+            # matching_asm = []
+            # idx += 1
         else:
             matching_asm.append(line)
             if (current_source is None):
                 print("No source???")
             if (idx < 0):
                 print("Dealing with offsets")
-            if (idx >= len(my_function)):
-                print("Fell off end somehow")
             else:
                 match = determine_bad_load(my_function[idx], line)
-                # print(f" {idx=}, {my_function[idx].source=}, {line=}")
+                if match is not None:
+                    print(match[0])   
 
 def main():
     parser = argparse.ArgumentParser()
@@ -258,12 +266,6 @@ def main():
                 cur_function.append(line)
 
     # The fini section shoukd be at the end, so we dont really need to deal with it
-    global example
-    print(example)
-    objdump_line = r"12e2:	48 c7 44 c7 f8 01 00 	movq   $0x1,-0x8(%rdi,%rax,8)"
-    match = re.match(r"\(.*\)", objdump_line)
-    print(objdump_line, match)
-    print(match[0])
     
 
 
