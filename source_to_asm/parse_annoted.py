@@ -243,19 +243,20 @@ def parse_basic_block(
     cur_mem_operation = mem_operation_start
     memory_block = []
     for line in basic_block_lines:
+        memory_block.append(line)
         if "(" in line:
             for idx, location in enumerate(prefetch_locations):
                 if location > cur_mem_operation:
                     break
                 if location == cur_mem_operation:
                     address_to_use = address[idx]
-                    prefetch_instruction = " ".join(["PREFETCHT1 ", address_to_use])
+                    prefetch_instruction = " ".join(["            PREFETCHT1 ", address_to_use, "\n" ])
                     memory_block.insert(0, prefetch_instruction)
                     break
             cur_mem_operation += 1
+            copy_basic_block.extend(memory_block)
             memory_block = []
-        else:
-            memory_block.append(line)
+    copy_basic_block.extend(memory_block)
     return copy_basic_block
 
 
@@ -274,6 +275,10 @@ def parse_ddiasm_function(
     mem_operation = 0
     for line in function_lines:
         if line.startswith("."):
+            print(f"label found, {memory_indexes=} {mem_operation=} {line=}")
+            if (line == ".L_1396:\n"):
+                print("Found the weird label")
+                print(basic_block)
             function_with_prefetch.extend(
                 parse_basic_block(
                     basic_block, mem_operation, memory_addeesses, memory_indexes
@@ -284,8 +289,16 @@ def parse_ddiasm_function(
             basic_block.append(line)
         if "(" in line:
             mem_operation += 1
+    function_with_prefetch.extend(basic_block)
+    if (function_name == "chase_indices"):
+        print(function_lines)
+        print(function_with_prefetch)
     return function_with_prefetch
 
+
+def write_function(f, lines):
+    for line in lines:
+        f.write(line)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -339,8 +352,11 @@ def main():
                 cur_function = []
             else:
                 cur_function.append(line)
+        
+        addresses, memory_indexes = parse_objdump_function(cur_function_name, cur_function)
+        function_addresses[cur_function_name] = addresses
+        function_indexes[cur_function_name] = memory_indexes
 
-    # The fini section shoukd be at the end, so we dont really need to deal with it
 
     # Now time to add the prefetch instructions
 
@@ -348,28 +364,40 @@ def main():
     ddiasm_func_pattern = re.compile(r"\.type .*, @function")
     cur_function = []
     cur_function_name = None
-    with open(filename, "a+") as f:
-        line = "junk"
-        f.seek(0)
-        while line != "# end section .text\n":
-            line = f.readline()
-            if re.match(ddiasm_func_pattern, line.strip("\n")):
-                if cur_function_name is not None:
-                    if (cur_function_name in function_addresses):
-                        my_addresses = function_addresses[cur_function_name]
-                        my_indexes = function_indexes[cur_function_name]
-                        parse_ddiasm_function(
-                            cur_function, cur_function_name, my_addresses, my_indexes
-                        )
-                cur_function = []
-                cur_function_name = line.split()[1][:-1]
-            else:
-                cur_function.append(line)
-        if (cur_function_name in function_addresses):
-            my_addresses = function_addresses[cur_function_name]
-            my_indexes = function_indexes[cur_function_name]
-            parse_ddiasm_function(cur_function, cur_function_name, my_addresses, my_indexes)
+    out_file_name = args.ddiasm + "with_prefetch.s"
+    with open(filename, "r") as f:
+        with open(out_file_name, "w+") as w:
+            line = "junk"
+            f.seek(0)
+            while line != "# end section .text\n":
+                line = f.readline()
+                if re.match(ddiasm_func_pattern, line.strip("\n")):
+                    if cur_function_name is not None:
+                        if (cur_function_name in function_addresses):
+                            my_addresses = function_addresses[cur_function_name]
+                            my_indexes = function_indexes[cur_function_name]
+                            new_function = parse_ddiasm_function(
+                                cur_function, cur_function_name, my_addresses, my_indexes
+                            )
+                            cur_function = new_function
+                    write_function(w, cur_function)
+                    cur_function = [line]
+                    cur_function_name = line.split()[1][:-1]
+                else:
+                    cur_function.append(line)
+            cur_function = cur_function[:-1] # Remvoe the end section .text
+            if (cur_function_name in function_addresses):
+                my_addresses = function_addresses[cur_function_name]
+                my_indexes = function_indexes[cur_function_name]
+                new_function = parse_ddiasm_function(cur_function, cur_function_name, my_addresses, my_indexes)
+                cur_function = new_function
+            write_function(w, cur_function)
+            cur_function = []
+            while line != "":
+                cur_function.append(line)                
 
+                line = f.readline()
+            write_function(w, cur_function)
 
 if __name__ == "__main__":
     main()
