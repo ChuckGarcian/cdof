@@ -158,6 +158,7 @@ def determine_bad_load(
         return None
     if "lea" in assembly_line or "nop" in assembly_line:
         return None
+    # print(source_line)
     if source_line.data_1_read_miss is None:
         return None
     if source_line.data_ll_read_miss * 5 > source_line.data_reads:
@@ -181,6 +182,7 @@ def parse_objdump_function(
     fake_memory_operation = 0
     addresses = []
     memory_operations = []
+    print(function_name)
     for line in function_body:
         stripped_line = line.strip("\n")
         match = re.match(asm_pattern, stripped_line)
@@ -274,13 +276,8 @@ def write_function(f, lines):
         f.write(line)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("cachegrind")
-    parser.add_argument("objdump")
-    parser.add_argument("ddiasm")
-    args = parser.parse_args()
-    filename = args.cachegrind
+def handle_logic(cachegrind, objdump, ddiasm):
+    filename = cachegrind
     section = []
     count = 0
     with open(filename) as f:
@@ -301,7 +298,7 @@ def main():
     parse_section(section)
 
     # We have parsed the source code, now we want to parse the objdump
-    filename = args.objdump
+    filename = objdump
     cur_function_name = ""
     cur_function = []
     function_pattern = re.compile(r"[0-9a-f]{16} <.*>:")
@@ -331,11 +328,11 @@ def main():
 
     # Now time to add the prefetch instructions
 
-    filename = args.ddiasm
+    filename = ddiasm
     ddiasm_func_pattern = re.compile(r"\.type .*, @function")
     cur_function = []
     cur_function_name = None
-    out_file_name = args.ddiasm + "with_prefetch.s"
+    out_file_name = ddiasm + "with_prefetch.s"
     with open(filename, "r") as f:
         with open(out_file_name, "w+") as w:
             line = "junk"
@@ -374,7 +371,3 @@ def main():
 
                 line = f.readline()
             write_function(w, cur_function)
-
-
-if __name__ == "__main__":
-    main()
