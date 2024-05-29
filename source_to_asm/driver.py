@@ -14,7 +14,7 @@ def main():
     args = parser.parse_args()
     test_runs = args.test_runs
     temporary_dir = tempfile.mkdtemp()
-    print(temporary_dir)
+    print(f"Creating a tempoary directory \"{temporary_dir}\" If this program exits abnormnally this directoy might not be removed")
     # Run cachegrind
     runs = []
     bin_name = None
@@ -71,7 +71,7 @@ def main():
 
     print("Adding the prefetch instructions") 
     handle_logic(cachegrind=annotate_file_name, objdump=objdump_file_name, ddiasm=args.ddiasm)
-
+    shutil.rmtree(temporary_dir)
 
     
 

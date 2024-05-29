@@ -158,7 +158,8 @@ def determine_bad_load(
         return None
     if "lea" in assembly_line or "nop" in assembly_line:
         return None
-    # print(source_line)
+    if type(source_line) == str:
+        return None
     if source_line.data_1_read_miss is None:
         return None
     if source_line.data_ll_read_miss * 5 > source_line.data_reads:
@@ -182,7 +183,6 @@ def parse_objdump_function(
     fake_memory_operation = 0
     addresses = []
     memory_operations = []
-    print(function_name)
     for line in function_body:
         stripped_line = line.strip("\n")
         match = re.match(asm_pattern, stripped_line)
