@@ -24,7 +24,6 @@ example = None
 
 
 def parse_function(function: list[str], function_name: str):
-    print("________ NEW __________")
     function_lines = []
     global example
     for line in function:
@@ -99,7 +98,6 @@ def parse_function(function: list[str], function_name: str):
         function_lines.append(instrumented_line)
         if example is None and datall_miss_reads is not None and datall_miss_reads != 0:
             example = instrumented_line
-            print("Set example")
     functions[function_name] = function_lines
 
 
@@ -115,31 +113,25 @@ def parse_source_section(section: list[str]):
             if source_idx == 0:
                 source_idx = line.find("// @prefetch")
         prefetch_ctr += 1
-    print(prefetch_lines)
     for idx, line in enumerate(prefetch_lines):
         true_line = line + 1
         source_line = section[true_line][source_idx:]
         function_name = source_line.split()[1].split("(")[0]
-        # print(function_name)
         function_end = true_line
         if idx + 1 == len(prefetch_lines):
             function_end = len(section) - 1
         else:
             function_end = prefetch_lines[idx + 1]
-            # print("Non last number")
         if function_name in functions:
-            print(f"found {function_name}")
             parse_function(section[true_line:function_end], function_name)
 
 
 def parse_function_file_section(section: list[str]) -> dict[str, str]:
-    print("Found function::file")
     char_num = section[1].find("function:file")
     global functions
     functions = {}
     for line in section[3::2]:
         funciton_file = line[char_num:]
-        print(funciton_file)
         colon_split = funciton_file.split(":")
         function_name = colon_split[0]
         file_path = ":".join(colon_split[1:])
@@ -147,8 +139,6 @@ def parse_function_file_section(section: list[str]) -> dict[str, str]:
 
 
 def parse_section(section: list[str]):
-    print("---    NEW SECTION      ---")
-    # print(section)
     if not section:
         return
     if "-- Annotated source file: " in section[0]:
@@ -168,21 +158,19 @@ def determine_bad_load(
         return None
     if "lea" in assembly_line or "nop" in assembly_line:
         return None
-    # if (source_line.data_1_read_miss is None):
-    #     return None
-    # if (source_line.data_ll_read_miss * 5 > source_line.data_reads):
-    #     # Not enough misses here, try again later
-    #     return None
+    if source_line.data_1_read_miss is None:
+        return None
+    if source_line.data_ll_read_miss * 5 > source_line.data_reads:
+        # Not enough misses here, try again later
+        return None
     return re.search(r"\(.*\)", assembly_line)
 
 
 def parse_objdump_function(
     function_name: str, function_body: list[str]
 ) -> tuple[list[str], list[int]]:
-    print(f"{function_name=}")
     if function_name not in functions:
-        print(f"Skipped {function_name}")
-        return ([],[])
+        return ([], [])
 
     asm_pattern = re.compile(r"    [0-9a-f]*:\t.*")
     current_source = None
@@ -204,13 +192,6 @@ def parse_objdump_function(
                 idx += 1
                 lines_of_source[line] = idx
             current_source = stripped_line
-            # if idx >= len(my_function):
-            #     print(f"Souce fell off {current_source=}, {idx=}")
-            # else:
-            #     print(f"{current_source=}, {idx=}, {my_function[idx].source=}")
-            # current_source = stripped_line
-            # matching_asm = []
-            # idx += 1
         else:
             matching_asm.append(line)
             if current_source is None:
@@ -223,7 +204,6 @@ def parse_objdump_function(
 
                 match = determine_bad_load(my_function[idx], line)
                 if match is not None:
-                    print(match[0])
                     addresses.append(match[0])
                     memory_operations.append(fake_memory_operation)
     return (addresses, memory_operations)
@@ -250,7 +230,9 @@ def parse_basic_block(
                     break
                 if location == cur_mem_operation:
                     address_to_use = address[idx]
-                    prefetch_instruction = " ".join(["            PREFETCHT1 ", address_to_use, "\n" ])
+                    prefetch_instruction = " ".join(
+                        ["            PREFETCHT1 ", address_to_use, "\n"]
+                    )
                     memory_block.insert(0, prefetch_instruction)
                     break
             cur_mem_operation += 1
@@ -267,18 +249,12 @@ def parse_ddiasm_function(
     memory_indexes: list[int],
 ):
     if function_name not in functions:
-        print(f"Skipped {function_name} ddiasm")
         return function_lines
-    print(f"Working on {function_name} ddiasm")
     basic_block = []
     function_with_prefetch = []
     mem_operation = 0
     for line in function_lines:
         if line.startswith("."):
-            print(f"label found, {memory_indexes=} {mem_operation=} {line=}")
-            if (line == ".L_1396:\n"):
-                print("Found the weird label")
-                print(basic_block)
             function_with_prefetch.extend(
                 parse_basic_block(
                     basic_block, mem_operation, memory_addeesses, memory_indexes
@@ -290,15 +266,13 @@ def parse_ddiasm_function(
         if "(" in line:
             mem_operation += 1
     function_with_prefetch.extend(basic_block)
-    if (function_name == "chase_indices"):
-        print(function_lines)
-        print(function_with_prefetch)
     return function_with_prefetch
 
 
 def write_function(f, lines):
     for line in lines:
         f.write(line)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -307,13 +281,11 @@ def main():
     parser.add_argument("ddiasm")
     args = parser.parse_args()
     filename = args.cachegrind
-    print(filename)
     section = []
     count = 0
     with open(filename) as f:
         line = "junk"
         while line != "":
-            # print(line)
             line = f.readline()
             if (
                 "---------------------------------------------------------------------------"
@@ -327,8 +299,6 @@ def main():
             else:
                 section.append(line)
     parse_section(section)
-
-    # print(functions)
 
     # We have parsed the source code, now we want to parse the objdump
     filename = args.objdump
@@ -352,11 +322,12 @@ def main():
                 cur_function = []
             else:
                 cur_function.append(line)
-        
-        addresses, memory_indexes = parse_objdump_function(cur_function_name, cur_function)
+
+        addresses, memory_indexes = parse_objdump_function(
+            cur_function_name, cur_function
+        )
         function_addresses[cur_function_name] = addresses
         function_indexes[cur_function_name] = memory_indexes
-
 
     # Now time to add the prefetch instructions
 
@@ -373,11 +344,14 @@ def main():
                 line = f.readline()
                 if re.match(ddiasm_func_pattern, line.strip("\n")):
                     if cur_function_name is not None:
-                        if (cur_function_name in function_addresses):
+                        if cur_function_name in function_addresses:
                             my_addresses = function_addresses[cur_function_name]
                             my_indexes = function_indexes[cur_function_name]
                             new_function = parse_ddiasm_function(
-                                cur_function, cur_function_name, my_addresses, my_indexes
+                                cur_function,
+                                cur_function_name,
+                                my_addresses,
+                                my_indexes,
                             )
                             cur_function = new_function
                     write_function(w, cur_function)
@@ -385,19 +359,22 @@ def main():
                     cur_function_name = line.split()[1][:-1]
                 else:
                     cur_function.append(line)
-            cur_function = cur_function[:-1] # Remvoe the end section .text
-            if (cur_function_name in function_addresses):
+            cur_function = cur_function[:-1]  # Remvoe the end section .text
+            if cur_function_name in function_addresses:
                 my_addresses = function_addresses[cur_function_name]
                 my_indexes = function_indexes[cur_function_name]
-                new_function = parse_ddiasm_function(cur_function, cur_function_name, my_addresses, my_indexes)
+                new_function = parse_ddiasm_function(
+                    cur_function, cur_function_name, my_addresses, my_indexes
+                )
                 cur_function = new_function
             write_function(w, cur_function)
             cur_function = []
             while line != "":
-                cur_function.append(line)                
+                cur_function.append(line)
 
                 line = f.readline()
             write_function(w, cur_function)
+
 
 if __name__ == "__main__":
     main()
