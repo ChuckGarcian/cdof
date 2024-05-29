@@ -17,6 +17,7 @@ def main():
     print(f"Creating a tempoary directory \"{temporary_dir}\" If this program exits abnormnally this directoy might not be removed")
     # Run cachegrind
     runs = []
+    bin_path = None
     bin_name = None
     with open(test_runs) as f:
         run = f.readline()
@@ -26,9 +27,10 @@ def main():
             run_file = os.path.join(temporary_dir, f"run{run_no}")
             runs.append(run_file)
             cur_binary = run_split[0]
-            if bin_name is None:
-                bin_name = cur_binary
-            assert bin_name == cur_binary, "multiple binary names detected, seperate your test runs"
+            if bin_path is None:
+                bin_path = cur_binary
+                bin_name = os.path.split(bin_path)[-1]
+            assert bin_path == cur_binary, "multiple binary names detected, seperate your test runs"
 
             print(f"Running \"{run.strip()}\" using cachegrind. This may take a while")
             command_line = ["valgrind", "--tool=cachegrind", f"--cachegrind-out-file={run_file}", "--cache-sim=yes"]
@@ -64,13 +66,22 @@ def main():
 
     # We also need to run objdump on it
 
-    command_line = ["objdump", "-dS", bin_name]
+    command_line = ["objdump", "-dS", bin_path]
     objdump_file_name = os.path.join(temporary_dir, "dump")
     with open(objdump_file_name, "wb+") as f:
-        objdump = subprocess.run(command_line, stdout=f, check=True)
+        subprocess.run(command_line, stdout=f, check=True)
 
     print("Adding the prefetch instructions") 
     handle_logic(cachegrind=annotate_file_name, objdump=objdump_file_name, ddiasm=args.ddiasm)
+
+    # Now we need to reassamble it
+
+    with_prefetch_asm = args.ddiasm + "with_prefetch.s"
+    with_prefetch_bin_name = bin_name + "with_prefetch"
+    print("Reassambling")
+    command_line = ["gcc", "-nostartfiles", with_prefetch_asm, "-o", with_prefetch_bin_name]
+    subprocess.run(command_line, check=True)
+
     shutil.rmtree(temporary_dir)
 
     
