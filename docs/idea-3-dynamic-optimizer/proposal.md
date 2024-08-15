@@ -35,7 +35,7 @@ The three benchmarks will consist of:
    - CDOF performs better on all benchmarks compared to executing with hardware prefetching disabled
    - CDOF yields better performance compared to GCC static software prefetch insertions on at least one of the benchmarks. 
 - A: 
-   - CDOF performs as well as, or better than, hardware prefetching on at least one benchmark.
+   - CDOF performs as well as, or better than, hardware prefetching on at least one benchmark. 
 
 # 4 Relevance to Computer Architecture
 Throughout our study of computer architecture, we have learned a variety of optimization techniques that work to increase the overall performance of the machine. Such techniques include: cache memory that reduce access latency and their related cache optimizations (e.g., multilevel caching, replacement, and prefetch policies) that further reduce average data access latencies. Moreover, we learned about dynamic scheduling in the context of out-of-order processors that are able to better exploit instruction level parallelism in cases that otherwise prove difficult for static compilers.
