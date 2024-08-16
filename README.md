@@ -7,8 +7,7 @@
 Install cdof using the `setup.py` file:
 
 ```
-ddisasm example.o --ir example.gtirb
-gtirb-pprinter example.gtirb --asm example.s
+pip install .
 ```
 
 Once installed, cdof is command line callable.
