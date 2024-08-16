@@ -2,7 +2,18 @@
 
 *CDOF* is a dynamic optimization framework for C.
 
-## Running CDOF
+## Installing CDOF 
+
+Install cdof using the `setup.py` file:
+
+```
+ddisasm example.o --ir example.gtirb
+gtirb-pprinter example.gtirb --asm example.s
+```
+
+Once installed, cdof is command line callable.
+
+## Running CDOF 
 
 To optimize a C program using CDOF:
 
@@ -24,7 +35,7 @@ To optimize a C program using CDOF:
 3. Call the CDOF driver:
 
     ```sh
-    python3 driver.py test_runs.txt example.s
+    cdof.py test_runs.txt example.s
     ```
 
 ## Tasks
