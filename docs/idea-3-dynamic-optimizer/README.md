@@ -1,1 +1,0 @@
-This directory contains the proposal and some other draft notes containing precursory ideas that eventually lead to the proposal pdf.

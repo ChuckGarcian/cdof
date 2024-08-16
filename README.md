@@ -2,6 +2,31 @@
 
 *CDOF* is a dynamic optimization framework for C.
 
+## Running CDOF
+
+To optimize a C program using CDOF:
+
+1. Disassemble the target file using [ddisasm](https://github.com/grammatech/ddisasm):
+
+    ```sh
+    ddisasm example.o --ir example.gtirb
+    gtirb-pprinter example.gtirb --asm example.s
+    ```
+
+2. Create a `test_runs` file with all execution runs:
+
+    ```sh
+    example.o -i 5
+    example.o -i 10
+    example.o -i 15
+    ```
+
+3. Call the CDOF driver:
+
+    ```sh
+    python3 driver.py test_runs.txt example.s
+    ```
+
 ## Tasks
 
 * Connect valgrind source code to instructions

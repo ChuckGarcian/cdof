@@ -304,8 +304,10 @@ def handle_logic(cachegrind, objdump, ddiasm):
     function_pattern = re.compile(r"[0-9a-f]{16} <.*>:")
     function_addresses = {}
     function_indexes = {}
+    
     with open(filename) as f:
         line = "junk"
+    
         while line != "":
             line = f.readline()
             if re.match(function_pattern, line):
@@ -327,17 +329,19 @@ def handle_logic(cachegrind, objdump, ddiasm):
         function_indexes[cur_function_name] = memory_indexes
 
     # Now time to add the prefetch instructions
-
     filename = ddiasm
     ddiasm_func_pattern = re.compile(r"\.type .*, @function")
     cur_function = []
     cur_function_name = None
     out_file_name = ddiasm + "with_prefetch.s"
+    print ("out_file_name: {}".format (out_file_name))
+    
     with open(filename, "r") as f:
         with open(out_file_name, "w+") as w:
             line = "junk"
             f.seek(0)
             while line != "# end section .text\n":
+
                 line = f.readline()
                 if re.match(ddiasm_func_pattern, line.strip("\n")):
                     if cur_function_name is not None:
