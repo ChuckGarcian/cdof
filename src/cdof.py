@@ -4,12 +4,12 @@ import tempfile
 import os
 import shutil
 
-from parse_annoted import handle_logic
+from parse_annotated import handle_logic
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("test_runs", help="A path to the file containing all test runs that you want to use")
-    parser.add_argument("ddiasm", help="A path to the disassembled binary likely using ddiasm")
+    parser.add_argument("ddisasm", help="A path to ddisasm disassembled binary")
     args = parser.parse_args()
     test_runs = args.test_runs
     temporary_dir = tempfile.mkdtemp()
@@ -81,17 +81,13 @@ def main():
         subprocess.run(command_line, stdout=f, check=True)
 
     print("cdof: Adding the prefetch instructions") 
-    handle_logic(cachegrind=annotate_file_name, objdump=objdump_file_name, ddiasm=args.ddiasm)
+    handle_logic(cachegrind=annotate_file_name, objdump=objdump_file_name, ddisasm=args.ddisasm)
 
     # Now we need to reassamble it
-    with_prefetch_asm = args.ddiasm + "with_prefetch.s"
+    with_prefetch_asm = args.ddisasm + "with_prefetch.s"
     with_prefetch_bin_name = bin_name + "with_prefetch"
     
     print("cdof: Reassambling")
     command_line = ["gcc", "-nostartfiles", with_prefetch_asm, "-o", with_prefetch_bin_name]
     subprocess.run(command_line, check=True)
     shutil.rmtree(temporary_dir)
-
-
-if __name__ == "__main__":
-    main()

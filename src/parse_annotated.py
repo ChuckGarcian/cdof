@@ -276,7 +276,7 @@ def write_function(f, lines):
         f.write(line)
 
 
-def handle_logic(cachegrind, objdump, ddiasm):
+def handle_logic(cachegrind, objdump, ddisasm):
     filename = cachegrind
     section = []
     count = 0
@@ -329,11 +329,11 @@ def handle_logic(cachegrind, objdump, ddiasm):
         function_indexes[cur_function_name] = memory_indexes
 
     # Now time to add the prefetch instructions
-    filename = ddiasm
+    filename = ddisasm
     ddiasm_func_pattern = re.compile(r"\.type .*, @function")
     cur_function = []
     cur_function_name = None
-    out_file_name = ddiasm + "with_prefetch.s"
+    out_file_name = ddisasm + "with_prefetch.s"
     print ("out_file_name: {}".format (out_file_name))
     
     with open(filename, "r") as f:
