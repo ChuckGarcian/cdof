@@ -5,7 +5,7 @@ N ?= 100
 
 # Build test
 all:
-	gcc $(TEST).c -o $(TEST).o
+	gcc $(TEST).c -o $(TEST).o -g
 
 # Dry Run 
 run:

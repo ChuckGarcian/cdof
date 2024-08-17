@@ -51,3 +51,6 @@ To optimize a C program using CDOF:
   * TODO: Remove that restriction
 * Another resteriction is that all lines of code in a function must be unique (Note, adding comments inline is fine)
   * TODO: Remove that restrictioin too
+
+* need valgrind 3.23.0
+  * [Source link](https://valgrind.org/downloads/repository.html)

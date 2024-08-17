@@ -37,6 +37,7 @@ int main (int argc, char *argv[])
 }
 
 /* y ← A*x + y */
+// @prefetch
 void gemv (int m, int n, double *A, double *x, double *y)
 {
   // Axpy

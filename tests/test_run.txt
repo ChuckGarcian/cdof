@@ -1,1 +1,1 @@
-./gemv_test.o
+/home/joseph/personal_projects/cdof/tests/gemv_test.o 10000 100
