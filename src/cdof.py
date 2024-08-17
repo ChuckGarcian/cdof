@@ -59,7 +59,7 @@ def main():
 
     print("Finished gathering data")
 
-    # New we annotate -- 
+    # New we annotate 
     command_line = ["cg_annotate", "--context=100000", "--show-percs=no"]
     command_line.extend(runs)
 
