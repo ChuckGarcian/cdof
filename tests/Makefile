@@ -21,11 +21,11 @@ cdof: all
 
 # Measure Before Optimization
 measure_nop:
-	perf stat  -e cache-references,cache-misses ./$(TEST).o $(M) $(N)
+	perf stat  -e cache-references,cache-misses,LLC-loads,LLC-load-misses ./$(TEST).o $(M) $(N)
 
 # Measure After Optimization
 measure_op:
-	perf stat  -e cache-references,cache-misses ./$(TEST).owith_prefetch $(M) $(N)
+	perf stat  -e cache-references,cache-misses,LLC-loads,LLC-load-misses ./$(TEST).owith_prefetch $(M) $(N)
 
 clean:
 	rm -f $(TEST).o $(TEST).owith_prefetch $(TEST).swith_prefetch.s $(TEST).s $(TEST).gtirb 
