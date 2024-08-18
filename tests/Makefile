@@ -1,6 +1,6 @@
 TEST ?= gemv_test
 test_run ?= test_run.txt
-M ?= 10000
+M ?= 1000000
 N ?= 100
 
 # Build test

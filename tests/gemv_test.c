@@ -30,13 +30,13 @@ int main (int argc, char *argv[])
   RandomMatrix (m, n, A);
   RandomMatrix (1, n, x);
   
+  /* y ← A*x + y */  
   gemv (m, n, A, x, y);
 
   printf ("gemv_test: Done \n");
   return 0;
 }
 
-/* y ← A*x + y */
 // @prefetch
 void gemv (int m, int n, double *A, double *x, double *y)
 {
