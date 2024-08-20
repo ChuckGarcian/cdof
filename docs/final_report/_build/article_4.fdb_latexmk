@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex _build/article_4"] 1723728019.10795 "_build/article_4.aux" "_build/article_4.bbl" "_build/article_4" 1723728021.90943 0
+["bibtex _build/article_4"] 1724088251.03038 "_build/article_4.aux" "_build/article_4.bbl" "_build/article_4" 1724088271.93334 0
   "./sample.bib" 1723727896.58127 251 102e4c94e44acc90acf4631e1056dca1 ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/base/unsrt.bst" 1292289607 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "_build/article_4.aux" 1723728021.44303 5903 6bc882ae489d3b91be183497203fac84 "pdflatex"
+  "_build/article_4.aux" 1724088271.43265 5877 3f6fcb7a735a13e1eed7217e887f6443 "pdflatex"
   (generated)
   "_build/article_4.bbl"
   "_build/article_4.blg"
   (rewritten before read)
-["pdflatex"] 1723728019.2605 "article_4.tex" "_build/article_4.pdf" "article_4" 1723728021.90971 0
+["pdflatex"] 1724088269.00297 "article_4.tex" "_build/article_4.pdf" "article_4" 1724088271.93351 0
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/iwona/ec-iwona-sc.enc" 1276043435 2452 388b1f44dfda03ab19527677af70e7fb ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/iwona/ec-iwona.enc" 1276043435 2027 f8708480c25b8150843bb94b8b39c93f ""
@@ -205,10 +205,11 @@
   "Figures/Ipsum.jpg" 1723745428 7465 3088c3a4a9b63a19bfa35d43cb5a6080 ""
   "Figures/Lorem.jpg" 1723745428 25272 7b4f999e1357d689eb05686375d82686 ""
   "Figures/Sit.jpg" 1723745428 14215 1ae03c72ae9cad4a94e0efce371a2e91 ""
-  "_build/article_4.aux" 1723728021.44303 5903 6bc882ae489d3b91be183497203fac84 "pdflatex"
-  "_build/article_4.bbl" 1723728019.24724 246 cfd0bcfd572fda4a55f13600f2b87554 "bibtex _build/article_4"
-  "_build/article_4.out" 1723728020.91908 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "article_4.tex" 1723745428 9099 1761d361b6702411ed580d7e0af087c9 ""
+  "_build/article_4.aux" 1724088271.43265 5877 3f6fcb7a735a13e1eed7217e887f6443 "pdflatex"
+  "_build/article_4.bbl" 1724088251.19058 246 cfd0bcfd572fda4a55f13600f2b87554 "bibtex _build/article_4"
+  "_build/article_4.out" 1724088270.95965 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "abstract.tex" 1724088265.63063 69 749de3b2b024d74b26e3e6670ffc6200 ""
+  "article_4.tex" 1724088267.37963 9099 1faeb567eaed13be079ce9ffe7db9ce5 ""
   "structure.tex" 1723745428 3061 95a594650420119c9f58fd1c52a8f116 ""
   (generated)
   "_build/article_4.aux"

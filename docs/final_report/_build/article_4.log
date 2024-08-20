@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.9)  15 AUG 2024 08:20
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.5.9)  19 AUG 2024 12:24
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -973,6 +973,7 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 (/usr/local/texlive/2024/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
+(./abstract.tex)
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/iwona/m/sc/14.4'.
 (microtype)             Ignoring protrusion settings for this character.
@@ -987,47 +988,46 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/iwona/b/sc/10'.
 (microtype)             Ignoring protrusion settings for this character.
  [2]
-<Figures/GalleriaStampe.jpg, id=33, 414.348pt x 409.53pt>
+<Figures/GalleriaStampe.jpg, id=36, 414.348pt x 409.53pt>
 File: Figures/GalleriaStampe.jpg Graphic file (type jpg)
 <use Figures/GalleriaStampe.jpg>
-Package pdftex.def Info: Figures/GalleriaStampe.jpg  used on input line 170.
+Package pdftex.def Info: Figures/GalleriaStampe.jpg  used on input line 171.
 (pdftex.def)             Requested size: 185.0pt x 182.84953pt.
 LaTeX Font Info:    Trying to load font information for T1+fvm on input line 17
-1.
+2.
 
 (/usr/local/texlive/2024/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 7.65005pt on input line 171.
+(Font)              scaled to size 7.65005pt on input line 172.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `fvm' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
  [3 <./Figures/GalleriaStampe.jpg>] [4]
-<Figures/Lorem.jpg, id=66, 240.9pt x 180.675pt>
+<Figures/Lorem.jpg, id=70, 240.9pt x 180.675pt>
 File: Figures/Lorem.jpg Graphic file (type jpg)
 <use Figures/Lorem.jpg>
-Package pdftex.def Info: Figures/Lorem.jpg  used on input line 233.
+Package pdftex.def Info: Figures/Lorem.jpg  used on input line 234.
 (pdftex.def)             Requested size: 166.49887pt x 124.87814pt.
-<Figures/Ipsum.jpg, id=67, 240.9pt x 180.675pt>
+<Figures/Ipsum.jpg, id=71, 240.9pt x 180.675pt>
 File: Figures/Ipsum.jpg Graphic file (type jpg)
 <use Figures/Ipsum.jpg>
-Package pdftex.def Info: Figures/Ipsum.jpg  used on input line 234.
+Package pdftex.def Info: Figures/Ipsum.jpg  used on input line 235.
 (pdftex.def)             Requested size: 166.49887pt x 124.87814pt.
-<Figures/Dolor.jpg, id=68, 240.9pt x 180.675pt>
+<Figures/Dolor.jpg, id=72, 240.9pt x 180.675pt>
 File: Figures/Dolor.jpg Graphic file (type jpg)
 <use Figures/Dolor.jpg>
-Package pdftex.def Info: Figures/Dolor.jpg  used on input line 235.
+Package pdftex.def Info: Figures/Dolor.jpg  used on input line 236.
 (pdftex.def)             Requested size: 166.49887pt x 124.87814pt.
-<Figures/Sit.jpg, id=69, 240.9pt x 180.675pt>
+<Figures/Sit.jpg, id=73, 240.9pt x 180.675pt>
 File: Figures/Sit.jpg Graphic file (type jpg)
 <use Figures/Sit.jpg>
-Package pdftex.def Info: Figures/Sit.jpg  used on input line 236.
+Package pdftex.def Info: Figures/Sit.jpg  used on input line 237.
 (pdftex.def)             Requested size: 166.49887pt x 124.87814pt.
- (_build/article_4.bbl) [5] [6 <./Figures/Lorem.jpg> <./Figures/Ipsum.jpg> <./F
-igures/Dolor.jpg> <./Figures/Sit.jpg>]
-(_build/article_4.aux)
+ (_build/article_4.bbl) [5 <./Figures/Lorem.jpg> <./Figures/Ipsum.jpg> <./Figur
+es/Dolor.jpg> <./Figures/Sit.jpg>] (_build/article_4.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
@@ -1036,13 +1036,13 @@ Package rerunfilecheck Info: File `article_4.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 21455 strings out of 474050
- 402148 string characters out of 5742270
- 1946751 words of memory out of 5000000
- 43441 multiletter control sequences out of 15000+600000
+ 21458 strings out of 474050
+ 402244 string characters out of 5742270
+ 1947751 words of memory out of 5000000
+ 43443 multiletter control sequences out of 15000+600000
  692819 words of font info for 219 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 108i,23n,123p,10904b,708s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 108i,22n,121p,10904b,708s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 ></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/euler/euex10.p
 fb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10
@@ -1058,10 +1058,10 @@ exmf-dist/fonts/type1/nowacki/iwona/iwonar.pfb></usr/local/texlive/2024/texmf-d
 ist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2024/texmf-dist/fon
 ts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2024/texmf-dist/fonts/type
 1/urw/palatino/uplri8a.pfb>
-Output written on _build/article_4.pdf (6 pages, 411068 bytes).
+Output written on _build/article_4.pdf (5 pages, 410697 bytes).
 PDF statistics:
- 193 PDF objects out of 1000 (max. 8388607)
- 144 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
+ 189 PDF objects out of 1000 (max. 8388607)
+ 141 compressed objects within 2 object streams
+ 31 named destinations out of 1000 (max. 500000)
  44130 words of extra memory for PDF output out of 51595 (max. 10000000)
 
