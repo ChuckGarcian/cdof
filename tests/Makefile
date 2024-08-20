@@ -1,4 +1,4 @@
-TEST ?= memchase_test
+TEST ?= mtrans_test
 SAMPLE_N ?= 20
 test_args ?= 12
 default: build
