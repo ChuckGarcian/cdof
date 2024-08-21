@@ -1,0 +1,6 @@
+./memchase_test.o 10
+./memchase_test.o 12
+./memchase_test.o 14
+./memchase_test.o 16
+./memchase_test.o 18
+./memchase_test.o 20

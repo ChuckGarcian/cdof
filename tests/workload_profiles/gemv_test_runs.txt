@@ -1,0 +1,4 @@
+./gemv_test.o 100 100
+./gemv_test.o 1000 1000
+./gemv_test.o 1000 10000
+./gemv_test.o 1000 100000

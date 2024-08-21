@@ -1,0 +1,4 @@
+./mtrans_test.o 2 2
+./mtrans_test.o 32 32
+./mtrans_test.o 128 128
+./mtrans_test.o 256 256
