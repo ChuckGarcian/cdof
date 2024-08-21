@@ -1,7 +1,7 @@
-TARGET := article_4.tex
+TARGET := report
 
 all:
-	latexmk -pdf $(TARGET)
+	pandoc $(TARGET).md -o $(TARGET).pdf
 
 clean:
-	rm -rf _build
+	rm $(TARGET).pdf
