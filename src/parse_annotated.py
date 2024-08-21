@@ -150,7 +150,7 @@ def parse_section(section: list[str]):
 def determine_bad_load(
     source_line: InstrumentedSource, assembly_line: str
 ) -> Optional[Match]:
-    # Given a source line of code, and the binary lone of code, returns the memory address
+    # Given a source line of code, and the binary line of code, returns the memory address
     # Register of the load that is badly made. If there assembly line does not
     # Access meemoy returns None
 
@@ -217,7 +217,7 @@ def parse_basic_block(
     address: list[str],
     prefetch_locations: list[int],
 ) -> list[str]:
-    # Parse the basic block and inset a prefetch instruction if needed
+    # Parse the basic block and inseRt a prefetch instruction if needed
     # To inset a prefetch instruction we need to know which memory operations we need a prefetch for
     # The starting memoy instruction index, and the address to prefetch
     # Returns the rewritten basic block

@@ -1,11 +1,11 @@
-TEST ?= mtrans_test
+TEST ?= memchase_test
 SAMPLE_N ?= 20
 test_args ?= 12
 default: build
 
 # Build test
 build:
-	gcc $(TEST).c -o $(TEST).o -g
+	gcc $(TEST).c -o $(TEST).o -g -O0
 
 # Dry Run 
 run: build
